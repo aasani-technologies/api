@@ -13,8 +13,8 @@
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "declarationDir": "./dist",
-    "outDir": "./dist"
+    "outDir": "./dist",
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", ".staart/**/*.ts"],
   "exclude": ["node_modules"]
 }
