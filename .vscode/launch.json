@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Build Project",
-            "program": "${workspaceFolder}\\.staart\\src\\server.ts",
+            "program": "${workspaceFolder}\\dist\\.staart\\src\\__staart.js",
             "preLaunchTask": "npm: build",
             "sourceMaps": true,
             "smartStep": true,
