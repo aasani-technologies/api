@@ -220,4 +220,21 @@ CREATE TABLE `staart-identities` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
+-- ----------------------------
+-- Table structure for staart-domains
+-- ----------------------------
+DROP TABLE IF EXISTS `staart-pdf2tablejobs`;
+CREATE TABLE `staart-pdf2tablejobs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `organizationId` int(11) NOT NULL, 
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
+  `name` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `url` text COLLATE utf8mb4_bin NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `message` varchar(255) COLLATE utf8mb4_bin NOT NULL,
+  `isDeleted` int(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 SET FOREIGN_KEY_CHECKS = 1;

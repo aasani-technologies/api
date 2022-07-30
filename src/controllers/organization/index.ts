@@ -38,6 +38,7 @@ import { OrganizationSourcesController } from "./sources";
 import { OrganizationSubscriptionsController } from "./subscriptions";
 import { OrganizationWebhooksController } from "./webhooks";
 import { OrganizationTransactionsController } from "./transactions";
+import { OrganizationPdf2TableJobsController } from "./pdf2table";
 
 @Controller("organizations")
 @ChildControllers([
@@ -49,7 +50,8 @@ import { OrganizationTransactionsController } from "./transactions";
   new OrganizationSourcesController(),
   new OrganizationSubscriptionsController(),
   new OrganizationWebhooksController(),
-  new OrganizationTransactionsController()
+  new OrganizationTransactionsController(),
+  new OrganizationPdf2TableJobsController()
 ])
 @ClassMiddleware(authHandler)
 export class OrganizationController {

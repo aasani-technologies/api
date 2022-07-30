@@ -43,12 +43,14 @@ import {
   createApiKey,
   createDomain,
   createOrganization,
+  createPdf2TableJob,
   createWebhook,
   deleteAllOrganizationMemberships,
   deleteApiKey,
   deleteDomain,
   deleteOrganization,
   deleteOrganizationMembership,
+  deletePdf2TableJob,
   deleteWebhook,
   getApiKey,
   getApiKeyLogs,
@@ -59,12 +61,15 @@ import {
   getOrganizationDomains,
   getOrganizationMembershipDetailed,
   getOrganizationMemberships,
+  getOrganizationPdf2TableJobs,
   getOrganizationWebhooks,
+  getPdf2TableJob,
   getWebhook,
   updateApiKey,
   updateDomain,
   updateOrganization,
   updateOrganizationMembership,
+  updatePdf2TableJob,
   updateWebhook
 } from "../crud/organization";
 import { getUser, getUserByEmail } from "../crud/user";
@@ -89,7 +94,7 @@ import {
 } from "../interfaces/enum";
 import { KeyValue, Locals } from "../interfaces/general";
 import { InsertResult } from "../interfaces/mysql";
-import { Organization, Webhook } from "../interfaces/tables/organization";
+import { Organization, Pdf2TableJob, Webhook } from "../interfaces/tables/organization";
 import { User } from "../interfaces/tables/user";
 import { register } from "./auth";
 
@@ -979,6 +984,111 @@ export const verifyDomainForUser = async (
       }
     }
     throw new Error(DOMAIN_UNABLE_TO_VERIFY);
+  }
+  throw new Error(INSUFFICIENT_PERMISSION);
+};
+
+
+export const getOrganizationPdf2TableJobsForUser = async (
+  userId: string | ApiKeyResponse,
+  organizationId: string,
+  query: KeyValue
+) => {
+  if (
+    await can(
+      userId,
+      OrgScopes.READ_ORG_PDF2TABLEJOBS,
+      "organization",
+      organizationId
+    )
+  )
+    return getOrganizationPdf2TableJobs(organizationId, query);
+  throw new Error(INSUFFICIENT_PERMISSION);
+};
+
+export const getOrganizationPdf2TableJobForUser = async (
+  userId: string | ApiKeyResponse,
+  organizationId: string,
+  pdf2tablejobId: string
+) => {
+  if (
+    await can(
+      userId,
+      OrgScopes.READ_ORG_PDF2TABLEJOBS,
+      "organization",
+      organizationId
+    )
+  )
+    return getPdf2TableJob(organizationId, pdf2tablejobId);
+  throw new Error(INSUFFICIENT_PERMISSION);
+};
+
+export const updatePdf2TableJobForUser = async (
+  userId: string | ApiKeyResponse,
+  organizationId: string,
+  pdf2tablejobId: string,
+  data: KeyValue,
+  locals: Locals
+) => {
+  if (
+    await can(
+      userId,
+      OrgScopes.UPDATE_ORG_PDF2TABLEJOBS,
+      "organization",
+      organizationId
+    )
+  ) {
+    const result = await updatePdf2TableJob(organizationId, pdf2tablejobId, data);
+    queueWebhook(organizationId, Webhooks.UPDATE_PDF2TABLEJOB, data);
+    trackEvent({ organizationId, type: Webhooks.UPDATE_PDF2TABLEJOB }, locals);
+    return result;
+  }
+  throw new Error(INSUFFICIENT_PERMISSION);
+};
+
+export const createPdf2TableJobForUser = async (
+  userId: string | ApiKeyResponse,
+  organizationId: string,
+  pdf2tablejob: KeyValue,
+  locals: Locals
+) => {
+  if (
+    await can(
+      userId,
+      OrgScopes.CREATE_ORG_PDF2TABLEJOBS,
+      "organization",
+      organizationId
+    )
+  ) {
+    const result = await createPdf2TableJob({
+      organizationId,
+      ...pdf2tablejob,
+    } as Pdf2TableJob);
+    queueWebhook(organizationId, Webhooks.CREATE_PDF2TABLEJOB, pdf2tablejob);
+    trackEvent({ organizationId, type: Webhooks.CREATE_PDF2TABLEJOB }, locals);
+    return result;
+  }
+  throw new Error(INSUFFICIENT_PERMISSION);
+};
+
+export const deletePdf2TableJobForUser = async (
+  userId: string | ApiKeyResponse,
+  organizationId: string,
+  pdf2tablejobId: string,
+  locals: Locals
+) => {
+  if (
+    await can(
+      userId,
+      OrgScopes.DELETE_ORG_PDF2TABLEJOBS,
+      "organization",
+      organizationId
+    )
+  ) {
+    const result = await deletePdf2TableJob(organizationId, pdf2tablejobId);
+    queueWebhook(organizationId, Webhooks.DELETE_PDF2TABLEJOB, pdf2tablejobId);
+    trackEvent({ organizationId, type: Webhooks.DELETE_PDF2TABLEJOB }, locals);
+    return result;
   }
   throw new Error(INSUFFICIENT_PERMISSION);
 };

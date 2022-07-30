@@ -41,7 +41,8 @@ import {
 import {
   Domain,
   Organization,
-  Webhook
+  Webhook,
+  Pdf2TableJob
 } from "../interfaces/tables/organization";
 import { ApiKey } from "../interfaces/tables/organization";
 import { getPaginatedData } from "./data";
@@ -63,10 +64,10 @@ export const checkOrganizationUsernameAvailability = async (
 const getBestUsernameForOrganization = async (name: string) => {
   let available = false;
   let result = slugify(name);
-  if (checkOrganizationUsernameAvailability(result)) available = true;
+  if (await checkOrganizationUsernameAvailability(result)) available = true;
   while (!available) {
     result = createSlug(name);
-    if (checkOrganizationUsernameAvailability(result)) available = true;
+    if (await checkOrganizationUsernameAvailability(result)) available = true;
   }
   return result;
 };
@@ -438,6 +439,86 @@ export const checkDomainAvailability = async (username: string) => {
     if (domain && domain.id) return false;
   } catch (error) {}
   return true;
+};
+
+
+/**
+ * Get a list of pdf2tablejobs for an organization
+ */
+ export const getOrganizationPdf2TableJobs = async (
+  organizationId: string,
+  query: KeyValue
+) => {
+  return getPaginatedData<Pdf2TableJob>({
+    table: "pdf2tablejobs",
+    conditions: {
+      organizationId
+    },
+    ...query
+  });
+};
+
+/**
+ * Get a pdf2tablejob
+ */
+export const getPdf2TableJob = async (organizationId: string, pdf2tablejobId: string) => {
+  return ((await query(
+    `SELECT * FROM ${tableName(
+      "pdf2tablejobs"
+    )} WHERE id = ? AND organizationId = ? LIMIT 1`,
+    [pdf2tablejobId, organizationId]
+  )) as Array<Pdf2TableJob>)[0];
+};
+
+/**
+ * Create a pdf2tablejob
+ */
+ export const createPdf2TableJob = async (pdf2tablejob: Pdf2TableJob): Promise<InsertResult> => {
+  pdf2tablejob.createdAt = new Date();
+  pdf2tablejob.updatedAt = pdf2tablejob.createdAt; 
+  const response = await query(
+    `INSERT INTO ${tableName("pdf2tablejobs")} ${tableValues(pdf2tablejob)}`,
+    Object.values(pdf2tablejob)
+  );
+
+  return response;
+};
+
+/**
+ * Update a pdf2tablejob
+ */
+export const updatePdf2TableJob = async (
+  organizationId: string,
+  pdf2tablejobId: string,
+  data: KeyValue
+) => {
+  data.updatedAt = new Date();
+  data = removeReadOnlyValues(data);
+  const pdf2tablejob = await getPdf2TableJob(organizationId, pdf2tablejobId);
+  return query(
+    `UPDATE ${tableName("pdf2tablejobs")} SET ${setValues(
+      data
+    )} WHERE id = ? AND organizationId = ?`,
+    [...Object.values(data), pdf2tablejobId, organizationId]
+  );
+};
+
+/**
+ * Delete a pdf2tablejob
+ */
+export const deletePdf2TableJob = async (
+  organizationId: string,
+  pdf2tablejobId: string
+) => {
+  const currentPdf2TableJob = await getPdf2TableJob(organizationId, pdf2tablejobId);
+  const response = await query(
+    `DELETE FROM ${tableName(
+      "pdf2tablejobs"
+    )} WHERE id = ? AND organizationId = ? LIMIT 1`,
+    [pdf2tablejobId, organizationId]
+  );
+  
+  return response;
 };
 
 /**

@@ -38,3 +38,15 @@ export interface Webhook extends IdRow {
   secret?: string;
   isActive: boolean;
 }
+
+export interface Pdf2TableJob {
+  id?: string;   
+  organizationId: string;    
+  createdAt?: Date;   
+  updatedAt?: Date; 
+  name: string; 
+  url: string;
+  status:string;
+  message:string;
+  isDeleted:boolean;
+}

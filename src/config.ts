@@ -130,3 +130,9 @@ export const ELASTIC_EVENTS_PREFIX =
   process.env.ELASTIC_EVENTS_PREFIX || "staart-events-";
 export const ELASTIC_INSTANCES_INDEX =
   process.env.ELASTIC_INSTANCES_INDEX || "staart-instances";
+
+export const s3Config = {
+  bucketName: process.env.AWS_S3_BUCKET || "",
+  defaultRegion: process.env.DEFAULT_REGION || "",
+  defaultFilesACL: process.env.DEFAULT_FILES_ACL || "",
+};
