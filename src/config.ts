@@ -135,4 +135,6 @@ export const s3Config = {
   bucketName: process.env.AWS_S3_BUCKET || "",
   defaultRegion: process.env.DEFAULT_REGION || "",
   defaultFilesACL: process.env.DEFAULT_FILES_ACL || "",
+  accessKeyId: process.env.ACCESS_KEY_ID || "",
+  secretAccessKey: process.env.SECRET_ACCESS_KEY || "",
 };

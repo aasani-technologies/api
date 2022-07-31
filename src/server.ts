@@ -1,6 +1,7 @@
 import { success } from "@staart/errors";
 import { Controller, Get, Server } from "@staart/server";
 import { setupMiddleware } from "@staart/server";
+import fileUpload from "express-fileupload";
 
 import {
   errorHandler,
@@ -35,6 +36,7 @@ export class Staart extends Server {
 
   private setupHandlers() {
     setupMiddleware(this.app);
+    this.app.use(fileUpload());
     this.app.use(trackingHandler);
     this.app.use(rateLimitHandler);
     this.app.use(speedLimitHandler);

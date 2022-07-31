@@ -6,6 +6,8 @@ import { UploadedFile, File } from "../interfaces/file";
 
 const client: S3 = new S3({
     region: s3Config.defaultRegion,
+    accessKeyId:s3Config.accessKeyId,
+    secretAccessKey:s3Config.secretAccessKey
 });;
 
 const bucketName = s3Config.bucketName;
@@ -23,8 +25,8 @@ const uploadFile = async (file: File): Promise<string> => {
         .putObject({
             Bucket: bucketName,
             Key: fileKey,
-            ContentType: file.type,
-            Body: file.content,
+            ContentType: file.mimetype,
+            Body: file.data,
             ACL: s3Config.defaultFilesACL,
         })
         .promise();

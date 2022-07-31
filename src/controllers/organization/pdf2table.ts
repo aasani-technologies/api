@@ -32,6 +32,7 @@ import {
   updatePdf2TableJobForUser,
 } from "../../rest/organization";
 import {File} from '../../interfaces/file';
+import { getFiles } from "../../helpers/request";
 
 @Controller(":id/pdf2table")
 @ClassMiddleware(authHandler)
@@ -66,10 +67,10 @@ export class OrganizationPdf2TableJobsController {
   )
   async putUserPdf2TableJobs(req: Request, res: Response) {
     const id = await organizationUsernameToId(req.params.id);
-    joiValidate({ id: Joi.string().required() }, { id });
-    const { files } = req.body as { files: File[] };
+    joiValidate({ id: Joi.string().required() }, { id });   
+    const files = getFiles(req);
     const filesPaths = await upload(files);
-    const uploadedFiles = files.map((file, i) => ({name: file.name, url: filesPaths[i].path}));
+    const uploadedFiles = files.map((file:File, i:number) => ({name: file.name, url: filesPaths[i].path}));
     for(let uploadedFile of uploadedFiles) {
         await createPdf2TableJobForUser(
             localsToTokenOrKey(res),
